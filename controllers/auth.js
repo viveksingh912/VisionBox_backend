@@ -15,9 +15,9 @@ export const signup= async(req,res,next)=>{
     const newUser=await User.create({...req.body,password:hash});
     await newUser.save();
     const {password,...send}=newUser._doc;
-    var token = jwt.sign({id:send._id}, 'shhhhh');
-    res.cookie('access_token',token,{
-     }).status(200).json(send);
+    var accessToken = jwt.sign({id:send._id}, 'shhhhh');
+    const newData={...send,accessToken}
+    res.status(200).json(newData);
     }
     catch(err){
         next(err);
@@ -35,9 +35,9 @@ export const signin= async(req,res,next)=>{
         return next(crateError(400,"Wrong Credentials")); 
     }
     const {password,...send}=user._doc;
-    const token = jwt.sign({id:send._id}, 'shhhhh');
-     res.cookie('access_token',token,{
-     }).status(200).json(send);
+    const accessToken = jwt.sign({id:send._id}, 'shhhhh');
+     const newData={...send,accessToken}
+     res.status(200).json(newData);
     }
     catch(err){
         next(err);
@@ -46,10 +46,10 @@ export const signin= async(req,res,next)=>{
 export const googleAuth=async (req,res,next)=>{
     try{
         const user=await User.findOne({email:req.body.email});
+        console.log("running");
         if(user){
-            const token = jwt.sign({id:user._id}, 'shhhhh');
-            res.cookie('access_token',token,{
-             }).status(200).json(user._doc);
+            const accessToken = jwt.sign({id:user._id}, 'shhhhh');
+            res.status(200).json({...user._doc,accessToken});
         }
         else{
             const newUser=new User({
@@ -57,9 +57,8 @@ export const googleAuth=async (req,res,next)=>{
                 fromGoogle:true, 
             })
             const savedUser=await newUser.save();
-            const token = jwt.sign({id:savedUser._id}, 'shhhhh');
-            res.cookie('access_token',token,{
-             }).status(200).json(savedUser._doc);
+            const accessToken = jwt.sign({id:savedUser._id}, 'shhhhh');
+            res.status(200).json({...savedUser._doc,accessToken});
         }
     }
     catch(err){
