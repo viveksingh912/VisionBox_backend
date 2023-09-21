@@ -27,7 +27,12 @@ const Connect = () => {
 // to accpt json files form outside
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+const corsOptions = {
+  origin: '*',
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use("/api/auth", authRoute);
 app.use("/api/videos", videoRoute);
 app.use("/api/comments", commentRoute);
