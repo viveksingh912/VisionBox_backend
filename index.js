@@ -27,7 +27,10 @@ const Connect = () => {
 // to accpt json files form outside
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+  origin: 'https://vision-box-frontend.vercel.app',
+  credentials: true,
+}));
 app.use("/api/auth", authRoute);
 app.use("/api/videos", videoRoute);
 app.use("/api/comments", commentRoute);
