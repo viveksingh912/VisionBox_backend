@@ -8,7 +8,7 @@ export const signup= async(req,res,next)=>{
     try{
     const user= await User.findOne({email:req.body.email});
     if(user){
-        return res.send("Sorry a User with this email already exists");
+        return res.status(400).send("Sorry a User with this email already exists");
     }
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password, salt);
@@ -28,7 +28,7 @@ export const signin= async(req,res,next)=>{
     try{
     const user= await User.findOne({name:req.body.name});
     if(!user){
-        return res.send("Invalid Credentials");
+        return res.status(404).send("Invalid Credentials");
     }
     const checkPassword= await  bcrypt.compareSync(req.body.password, user.password); // true
     if(!checkPassword){
@@ -46,7 +46,6 @@ export const signin= async(req,res,next)=>{
 export const googleAuth=async (req,res,next)=>{
     try{
         const user=await User.findOne({email:req.body.email});
-        console.log("running");
         if(user){
             const accessToken = jwt.sign({id:user._id}, 'shhhhh');
             res.status(200).json({...user._doc,accessToken});
